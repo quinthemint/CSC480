@@ -37,7 +37,7 @@ def ranker(hand):
     # then check for straight
     (straight, ranks) = check_straight(hand)
 
-    # for tiebreaking 
+    # for tiebreaking, to compare best cards first
     ranks.sort(reverse=True)
 
     if flush:
@@ -45,7 +45,7 @@ def ranker(hand):
     # Royal Flush: 10
             rf = {8, 9, 10, 11, 12}
             if set(ranks) == rf:
-                return 10
+                return 10, ranks
 
     # Straight Flush: 9
             return 9, ranks
@@ -55,7 +55,7 @@ def ranker(hand):
     (rank1Card, rank1Count) = freq_ranks[0]
     (rank2Card, rank2Count) = freq_ranks[1]
 
-    # Four of a Kind: 8
+    # Four of a Kind: 8, tiebreak on rank of four
     if rank1Count == 4:
         return 8, rank1Count, ranks
 
@@ -68,11 +68,11 @@ def ranker(hand):
         return 6, (ranks[0], ranks[1]) # only way to tiebreak flush is on pocket cards
     # assuming first two are pocket cards in descending order
 
-    # Straight: 5
+    # Straight: 5, rank of straight included in comparison for tiebreaking
     if straight:
         return 5, ranks
 
-    # Trips: 4
+    # Trips: 4, tiebreak on rank of trips, then rest of hand
     if rank1Count == 3:
         return 4, rank1Count, ranks
 
@@ -80,7 +80,7 @@ def ranker(hand):
     if rank1Count == 2 and rank2Count == 2:
         return 3, sorted((rank1Card, rank2Card), reverse=True), ranks # order pairs first to compare best pairs
 
-    # One Pair: 2
+    # One Pair: 2, tiebreak on pair rank, then rest of hand
     if rank1Count == 2:
         return 2, rank1Card, ranks
 

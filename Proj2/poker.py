@@ -6,6 +6,17 @@ from handRank import ranker
 # suit is card // 13
 # rank is card % 13 
     
+# makes the int cards readable
+def toCard(card):
+    suit = card // 13
+    rank = card % 13
+        
+    ranks = "23456789TJQKA"
+    suits = "CDHS"
+    rank_str = ranks[rank]
+    suit_str = suits[suit]
+    return rank_str + suit_str
+
 def flop(deck):
     flop = deck[-3:]
     del deck[-3:]
@@ -31,46 +42,58 @@ opp = deck[-4:-2]
 
 del deck[-4:]
 
-print(bot)
-print(opp)
+print([toCard(card) for card in bot])
+print([toCard(card) for card in opp])
 
-# run mcts, decide if win is >50
+# run mcts, decide if win is >=50
 
 root = Node([], None)
-fold = MCTS(root, tree_deck, bot, table=[], round=1, limit=10)
+fold = MCTS(root, tree_deck, bot, table=[], round=0, limit=10)
+print("\nPreflop win %: ")
+print(fold)
 if fold < 0.5:
     print("Fold!")
-    exit
+    exit()
+else:
+    print("Stay!")
 
 # actual flop
 flop = flop(deck)
-print(flop)
+print([toCard(card) for card in flop])
 tree_deck = deck
 
-# run mcts, decide if win is >50
+# run mcts, decide if win is >=50
 
-fold = MCTS(root, tree_deck, bot, table=flop, round=2, limit=10)
+fold = MCTS(root, tree_deck, bot, table=flop, round=1, limit=10)
+print("\nPreturn win %: ")
+print(fold)
 if fold < 0.5:
     print("Fold!")
-    exit
+    exit()
+else:
+    print("Stay!")
 
 # actual turn
 turn = turn(deck, flop)
-print(turn)
+print([toCard(card) for card in turn])
 tree_deck = deck
 
-# run mcts, decide if win is >50
+# run mcts, decide if win is >=50
 
-fold = MCTS(root, tree_deck, bot, table=turn, round=3, limit=10)
+fold = MCTS(root, tree_deck, bot, table=turn, round=2, limit=10)
+print("\nPre-River win %: ")
+print(fold)
 if fold < 0.5:
     print("Fold!")
-    exit
+    exit()
+else:
+    print("Stay!")
 
 # actual river
 river = river(deck, turn)
-print(river)
+print([toCard(card) for card in river])
 
-# determine winner, or we folded
+# determine winner, or we folded earlier
 opp_actual = ranker(opp + river)
 bot_actual = ranker(bot + river)
 

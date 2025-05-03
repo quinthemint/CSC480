@@ -1,5 +1,7 @@
 from handRank import ranker
 
+# general tests for hand ranker
+
 def encode(card_str):
     rank_str = "23456789TJQKA"
     suit_str = "CDHS"

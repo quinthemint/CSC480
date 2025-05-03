@@ -3,8 +3,10 @@ import random
 import time
 from handRank import ranker
 
+# value present in slides on MCTS
 C = math.sqrt(2)
 
+# simple node with relevant table info and backpropagation for tree
 class Node:
     def __init__(self, state, parent=None):
         self.state = state
@@ -19,21 +21,21 @@ class Node:
         self.children.append(child)
         return child
     
+# UCB1 for balancing exploration and exploitation
 def UCB1(node):
     (node.wins / node.visits) + C * math.sqrt(math.log(node.parent.visits) / node.visits)
 
 # tree search
 # start at our cards plus the current round's community cards
 def MCTS(root, deck, hand, table, round, limit = 10):
-    start = time.perf_counter()
-    print(deck)
-    (time.perf_counter() - start) <= limit
     i = 0
-    while (i < 2):
-        i+=1
+    start = time.perf_counter()
+    while ((time.perf_counter() - start) <= limit):
+        i += 1
+        print(f"\rSimulation Count: {i}", end='', flush=True)
         node = root
-        deck_cpy = deck
-        table_cpy = table
+        deck_cpy = deck.copy()
+        table_cpy = table.copy()
         # selection - find non terminal leaf with highest UCB1
         while not node.terminal and len(node.children) != 0:
             UCB1s = [(child, UCB1(child)) for child in node.children]
